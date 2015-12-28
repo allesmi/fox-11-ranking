@@ -13,7 +13,7 @@ datafile = 'data.csv'
 response = urllib.request.urlretrieve(url, datafile)
 
 # Closure to count points
-def add_rank(score):
+def add_rank(scores, score):
 	def add_n_rank(name):
 		if not name:
 			return
@@ -25,12 +25,29 @@ def add_rank(score):
 
 	return add_n_rank
 
-add_first_rank = add_rank(100)
-add_second_rank = add_rank(80)
-add_third_rank = add_rank(60)
+scores = {}
+top_3_points = [
+	add_rank(scores, 100),
+	add_rank(scores, 80),
+	add_rank(scores, 60)
+	]
+
+faction_scores = {}
+faction_top_10_points = [
+	add_rank(faction_scores, 100),
+	add_rank(faction_scores, 80),
+	add_rank(faction_scores, 60),
+	add_rank(faction_scores, 50),
+	add_rank(faction_scores, 45),
+	add_rank(faction_scores, 40),
+	add_rank(faction_scores, 36),
+	add_rank(faction_scores, 32),
+	add_rank(faction_scores, 28),
+	add_rank(faction_scores, 26)
+	]
 
 print('Counting scores ...')
-scores = {}
+
 with open(datafile) as csvfile:
 	reader = csv.reader(csvfile, delimiter=',')
 	for row in reader:
@@ -38,22 +55,28 @@ with open(datafile) as csvfile:
 		winner = row[1]
 		enl = row[2]
 		res = row[3]
-		first = row[4]
-		second = row[5]
-		third = row[6]
+		top_3 = row[4:7]
+		faction_top_10 = row[7:]
 
 		if cycle in ["avg", "Cycle"]:
 			continue
 
-		add_first_rank(first)
-		add_second_rank(second)
-		add_third_rank(third)
+		for rank, agent in enumerate(top_3):
+			top_3_points[rank](agent)
 
-rank = 0
-prev = 0
-print("RANK\tAGENT\tPOINTS")
-for (agent, points) in reversed(sorted(scores.items(), key=lambda x: x[1])):
-	if prev is not points:
-		rank += 1
-		prev = points
-	print("{}\t{}\t{}".format(rank, agent, points))
+		for rank, agent in enumerate(faction_top_10):
+			faction_top_10_points[rank](agent)
+
+
+def print_ranking(scores):
+	rank = 0
+	prev = 0
+	print("RANK\tAGENT\tPOINTS")
+	for (agent, points) in reversed(sorted(scores.items(), key=lambda x: x[1])):
+		if prev is not points:
+			rank += 1
+			prev = points
+		print("{}\t{}\t{}".format(rank, agent, points))
+
+print_ranking(scores)
+print_ranking(faction_scores)
