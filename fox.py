@@ -2,13 +2,17 @@
 
 import urllib.request
 import csv
+import sys
 
 # Published Google Spreadsheet:
 url = 'https://docs.google.com/spreadsheets/d/1qDaw9-JDPdo7Fq-NEXQS55dSnSrxGJOTYqbYvDBwOV4/pub?gid=0&single=true&output=csv'
 # Cycle,Winner,ENL Score,RES Score,#1,#2,#3
 
+def log(msg):
+	print(msg, file=sys.stderr)
+
 # Get file and store locally
-print('Downloading data file ...')
+log('Downloading data file ...')
 datafile = 'data.csv'
 response = urllib.request.urlretrieve(url, datafile)
 
@@ -46,7 +50,7 @@ faction_top_10_points = [
 	add_rank(faction_scores, 26)
 	]
 
-print('Counting scores ...')
+log('Counting scores ...')
 
 with open(datafile) as csvfile:
 	reader = csv.reader(csvfile, delimiter=',')
@@ -71,7 +75,7 @@ with open(datafile) as csvfile:
 def print_ranking(scores):
 	rank = 0
 	prev = 0
-	print("RANK\tAGENT\tPOINTS")
+	print("# RANK\tAGENT\tPOINTS")
 	for (agent, points) in reversed(sorted(scores.items(), key=lambda x: x[1])):
 		if prev is not points:
 			rank += 1
