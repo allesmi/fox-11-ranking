@@ -56,11 +56,13 @@ faction_top_10_points = [
 
 log('Counting scores ...')
 
+enl_score = 0
+res_score = 0
 with open(datafile) as csvfile:
 	reader = csv.reader(csvfile, delimiter=',')
 	for row in reader:
 		cycle = row[0]
-		winner = row[1]
+		winner = row[1].lower()
 		enl = row[2]
 		res = row[3]
 		top_3 = row[4:7]
@@ -68,6 +70,11 @@ with open(datafile) as csvfile:
 
 		if cycle in ["avg", "Cycle"]:
 			continue
+
+		if winner == "enl":
+			enl_score += 1
+		elif winner == "res":
+			res_score += 1
 
 		for rank, agent in enumerate(top_3):
 			top_3_points[rank](agent)
@@ -86,5 +93,6 @@ def print_ranking(scores):
 			prev = points
 		print("{}\t{}\t{}".format(rank, agent, points))
 
+print("RES {} : {} ENL".format(res_score, enl_score))
 print_ranking(scores)
 print_ranking(faction_scores)
