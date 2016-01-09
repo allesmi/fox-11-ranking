@@ -14,7 +14,11 @@ def log(msg):
 # Get file and store locally
 log('Downloading data file ...')
 datafile = 'data.csv'
-response = urllib.request.urlretrieve(url, datafile)
+try:
+	response = urllib.request.urlretrieve(url, datafile)
+except Exception:
+	log("Error downloading file")
+	sys.exit(-1)
 
 # Closure to count points
 def add_rank(scores, score):
